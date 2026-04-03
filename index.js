@@ -10,6 +10,15 @@ const defaultConfig = {
         filterBrightness: 80,
         filterSaturate: 100
     },
+    pointerIdle: {
+        enabled: true,
+        time: 15000,
+        transitionDelay: 300,
+        transformScale: 100,
+        filterBlur: 0,
+        filterBrightness: 100,
+        filterSaturate: 100,
+    },
     pointerleave: {
         positionResetSwitch: true,
         transitionDelay: 300,
@@ -60,6 +69,13 @@ function checkPluginExistence() {
     );
 }
 
+// 计时器标签保持唯一
+let timer = null;
+// 计时器
+function startTimer(time, callback) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(callback, time);
+}
 
 // 注入CSS样式
 function injectCSSStyles() {
@@ -94,21 +110,11 @@ plugin.onLoad(async () => {
     let animationFrameRequest = null;
     let animationFrameRequested = false;
 
-    // 指针移动
+    // 指针移动 改-移除部分到“有操作”
     document.addEventListener("pointermove", event => {
         if (!animationFrameRequested) {
             animationFrameRequested = true;
             animationFrameRequest = requestAnimationFrame(() => {
-                // 读取配置
-                const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
-                const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
-                const transformScale = pluginConfig.get("pointermove")["transformScale"];
-                const filterBlur = pluginConfig.get("pointermove")["filterBlur"];
-                const filterBrightness = pluginConfig.get("pointermove")["filterBrightness"];
-                const filterSaturate = pluginConfig.get("pointermove")["filterSaturate"];
-                // 更改属性
-                backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
-                backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
                 // 跟随指针
                 if (followPointerSwitch) {
                     let translateX = window.innerWidth / 2 - event.clientX;
@@ -118,18 +124,64 @@ plugin.onLoad(async () => {
                     backgroundDom.style.setProperty("--translateX", `${translateX}px`);
                     backgroundDom.style.setProperty("--translateY", `${translateY}px`);
                 }
-                backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
-                backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
-                backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
                 animationFrameRequested = false;
             });
         }
+    });
+
+    const idleEvents = [
+        // 鼠标/指针事件
+        "pointermove", "pointerdown", "pointerup", 
+        "mousedown", "mouseup", "wheel", "auxclick",
+        // 新增：键盘事件（检测输入文字、按键）
+        "keydown", "keyup",];
+
+    // 无操作一段时间   
+    idleEvents.forEach(eventName => {
+        document.addEventListener(eventName, () => {
+            if(pluginConfig.get("pointerIdle")["enabled"])
+            startTimer(pluginConfig.get("pointerIdle")["time"], () => {
+            // 读取配置
+            const transitionDelay = pluginConfig.get("pointerIdle")["transitionDelay"];
+            const transformScale = pluginConfig.get("pointerIdle")["transformScale"];
+            const filterBlur = pluginConfig.get("pointerIdle")["filterBlur"];
+            const filterBrightness = pluginConfig.get("pointerIdle")["filterBrightness"];
+            const filterSaturate = pluginConfig.get("pointerIdle")["filterSaturate"];
+            // 更改属性
+            backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
+            backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+            // 画面更改
+            backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
+            backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
+            backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
+        })}, {passive: true})
+    });
+
+    // 有操作时
+    idleEvents.forEach(eventName => {
+        document.addEventListener(eventName, () =>{
+            // 读取配置
+            const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
+            const transformScale = pluginConfig.get("pointermove")["transformScale"];
+            const filterBlur = pluginConfig.get("pointermove")["filterBlur"];
+            const filterBrightness = pluginConfig.get("pointermove")["filterBrightness"];
+            const filterSaturate = pluginConfig.get("pointermove")["filterSaturate"];
+            // 更改属性
+            backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
+            backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+            // 画面更改
+            backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
+            backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
+            backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
+        })
     });
 
     // 指针离开
     document.addEventListener("pointerleave", () => {
         cancelAnimationFrame(animationFrameRequest);
         animationFrameRequested = false;
+        // 清除计时器
+        if (timer) clearTimeout(timer);
         // 读取配置
         const positionResetSwitch = pluginConfig.get("pointerleave")["positionResetSwitch"];
         const transitionDelay = pluginConfig.get("pointerleave")["transitionDelay"];
@@ -153,6 +205,7 @@ plugin.onLoad(async () => {
     // 窗口聚焦
     window.addEventListener("focus", () => {
         console.log("窗口聚焦");
+        if (timer) clearTimeout(timer);
         // 读取配置
         const transitionDelay = pluginConfig.get("windowFocus")["transitionDelay"];
         const transformScale = pluginConfig.get("windowFocus")["transformScale"];
@@ -170,6 +223,8 @@ plugin.onLoad(async () => {
     // 窗口失焦
     window.addEventListener("blur", () => {
         console.log("窗口失焦");
+        // 清除计时器
+        if (timer) clearTimeout(timer);
         // 读取配置
         const transitionDelay = pluginConfig.get("windowBlur")["transitionDelay"];
         const transformScale = pluginConfig.get("windowBlur")["transformScale"];
@@ -228,6 +283,52 @@ function initConfigView(configView) {
         filterBlur.value = pluginConfig.get("pointermove")["filterBlur"];
         filterBrightness.value = pluginConfig.get("pointermove")["filterBrightness"];
         filterSaturate.value = pluginConfig.get("pointermove")["filterSaturate"];
+    }
+
+    // 无操作
+    {
+        // 标题按钮
+        const apply = configView.querySelector(".pointerIdle .apply");
+        const reset = configView.querySelector(".pointerIdle .reset");
+        // 功能选项
+        const enabled = configView.querySelector(".pointerIdle .enabled");
+        const time = configView.querySelector(".pointerIdle .time");
+        const transitionDelay = configView.querySelector(".pointerIdle .transitionDelay");
+        const transformScale = configView.querySelector(".pointerIdle .transformScale");
+        const filterBlur = configView.querySelector(".pointerIdle .filterBlur");
+        const filterBrightness = configView.querySelector(".pointerIdle .filterBrightness");
+        const filterSaturate = configView.querySelector(".pointerIdle .filterSaturate");
+        //立即应用
+        apply.addEventListener("click", () => {
+            const config = pluginConfig.get("pointerIdle");
+            config["enabled"] = enabled.checked;
+            config["time"] = time.value;
+            config["transitionDelay"] = transitionDelay.value;
+            config["transformScale"] = transformScale.value;
+            config["filterBlur"] = filterBlur.value;
+            config["filterBrightness"] = filterBrightness.value;
+            config["filterSaturate"] = filterSaturate.value;
+            pluginConfig.set("pointerIdle", config);
+        });
+        // 恢复默认
+        reset.addEventListener("click", () => {
+            enabled.checked = defaultConfig["pointerIdle"]["enabled"];
+            time.value = defaultConfig["pointerIdle"]["time"];
+            transitionDelay.value = defaultConfig["pointerIdle"]["transitionDelay"];
+            transformScale.value = defaultConfig["pointerIdle"]["transformScale"];
+            filterBlur.value = defaultConfig["pointerIdle"]["filterBlur"];
+            filterBrightness.value = defaultConfig["pointerIdle"]["filterBrightness"];
+            filterSaturate.value = defaultConfig["pointerIdle"]["filterSaturate"];
+            pluginConfig.set("pointerIdle", undefined);
+        });
+        // 初始化值
+        enabled.checked = pluginConfig.get("pointerIdle")["enabled"];
+        time.value = pluginConfig.get("pointerIdle")["time"];
+        transitionDelay.value = pluginConfig.get("pointerIdle")["transitionDelay"];
+        transformScale.value = pluginConfig.get("pointerIdle")["transformScale"];
+        filterBlur.value = pluginConfig.get("pointerIdle")["filterBlur"];
+        filterBrightness.value = pluginConfig.get("pointerIdle")["filterBrightness"];
+        filterSaturate.value = pluginConfig.get("pointerIdle")["filterSaturate"];
     }
 
     // 指针离开

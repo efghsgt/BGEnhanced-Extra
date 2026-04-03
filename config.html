@@ -1,7 +1,7 @@
 <div id="BGEnhanced-Extra-Dom">
     <section class="pointermove">
         <h1 class="title">
-            <strong>指针移动</strong>
+            <strong>正在操作时</strong>
             <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
             <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
         </h1>
@@ -36,6 +36,58 @@
             <span>百分比(%)</span>
         </div>
     </section>
+
+    <hr />
+
+<section class="pointerIdle">
+    <h1 class="title">
+        <strong>无操作时</strong>
+        <button class="u-ibtn5 u-ibtnsz8 apply">立即应用</button>
+        <button class="u-ibtn5 u-ibtnsz8 reset">恢复默认</button>
+    </h1>
+
+    <div class="item_container">
+        <span>启用空闲检测：</span>
+        <input type="checkbox" class="switch-btn enabled">
+        <span>(鼠标静止一段时间后应用下方设置)</span>
+    </div>
+
+    <div class="item_container">
+        <span>等待：</span>
+        <input type="number" class="u-txt sc-flag number-input time" step="500">
+        <span>毫秒(ms)（1秒=1000ms）</span>
+    </div>
+
+    <div class="item_container">
+        <span>过度：</span>
+        <input type="number" class="u-txt sc-flag number-input transitionDelay" step="50">
+        <span>毫秒(ms)</span>
+    </div>
+
+    <div class="item_container">
+        <span>缩放：</span>
+        <input type="number" class="u-txt sc-flag number-input transformScale" step="1">
+        <span>百分比(%)</span>
+    </div>
+
+    <div class="item_container">
+        <span>模糊：</span>
+        <input type="number" class="u-txt sc-flag number-input filterBlur" step="1">
+        <span>像素(px)</span>
+    </div>
+
+    <div class="item_container">
+        <span>亮度：</span>
+        <input type="number" class="u-txt sc-flag number-input filterBrightness" step="1">
+        <span>百分比(%)</span>
+    </div>
+
+    <div class="item_container">
+        <span>饱和：</span>
+        <input type="number" class="u-txt sc-flag number-input filterSaturate" step="1">
+        <span>百分比(%)</span>
+    </div>
+</section>
 
     <hr />
 
