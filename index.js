@@ -2,6 +2,9 @@
 
 
 const defaultConfig = {
+    transparency: {
+        enabled: false,
+    },
     pointermove: {
         followPointerSwitch: true,
         transitionDelay: 150,
@@ -230,6 +233,12 @@ plugin.onLoad(async () => {
         const filterBlur = pluginConfig.get("windowFocus")["filterBlur"];
         const filterBrightness = pluginConfig.get("windowFocus")["filterBrightness"];
         const filterSaturate = pluginConfig.get("windowFocus")["filterSaturate"];
+        const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
+        // 位置复位
+        if (followPointerSwitch) {
+            backgroundDom.style.setProperty("--translateX", 0);
+            backgroundDom.style.setProperty("--translateY", 0);
+        }
         // 更改属性
         backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
         backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
@@ -249,6 +258,12 @@ plugin.onLoad(async () => {
         const filterBlur = pluginConfig.get("windowBlur")["filterBlur"];
         const filterBrightness = pluginConfig.get("windowBlur")["filterBrightness"];
         const filterSaturate = pluginConfig.get("windowBlur")["filterSaturate"];
+        const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
+        // 位置复位
+        if (followPointerSwitch) {
+            backgroundDom.style.setProperty("--translateX", 0);
+            backgroundDom.style.setProperty("--translateY", 0);
+        }
         // 更改属性
         backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
         backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
@@ -261,6 +276,45 @@ plugin.onLoad(async () => {
 
 // 初始化配置界面
 function initConfigView(configView) {
+    
+    // 歌单列表透明
+    {
+        // 功能选项
+        const enabled = configView.querySelector(".transparency .enabled");
+        // 载入配置
+        enabled.checked = pluginConfig.get("transparency")["enabled"];
+        if(enabled.checked){
+            const styleTag = document.createElement('style');
+            styleTag.textContent = `
+                .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
+            background-color: transparent !important;
+            } `;
+            document.head.appendChild(styleTag);
+        }
+
+        // 开关监听
+        enabled.addEventListener("change", () =>{
+            const config = pluginConfig.get("transparency");
+            config["enabled"] = enabled.checked;
+            pluginConfig.set("transparency", config)
+            if(enabled.checked){
+                const styleTag = document.createElement('style');
+                styleTag.textContent = `
+                    .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
+                background-color: transparent !important;
+                } `;
+                document.head.appendChild(styleTag);
+            }else{
+                const styleTag = document.createElement('style');
+                styleTag.textContent = `
+                    .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
+                background-color: #29252833 !important;
+                } `;
+                document.head.appendChild(styleTag);
+            }
+            config["enabled"] = enabled.checked;
+        })
+    }
     // 指针移动
     {
         const backgroundDom = document.querySelector(".BGEnhanced-BackgoundDom");
