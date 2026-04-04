@@ -12,4 +12,4 @@
 
 ![preview](preview.gif)
 
-![preview](preview.PNG)
+!([preview.PNG](https://github.com/efghsgt/BGEnhanced-ExtraII/blob/main/preview.png))
