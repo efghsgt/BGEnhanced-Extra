@@ -129,7 +129,7 @@ plugin.onLoad(async () => {
             // 跟随指针
             const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
             if (followPointerSwitch) {
-                 let translateX = window.innerWidth / 2 - event.clientX;
+                let translateX = window.innerWidth / 2 - event.clientX;
                 let translateY = window.innerHeight / 2 - event.clientY;
                 translateX = translateX - translateX / (transformScale / 100);
                 translateY = translateY - translateY / (transformScale / 100);
@@ -286,9 +286,24 @@ function initConfigView(configView) {
         if(enabled.checked){
             const styleTag = document.createElement('style');
             styleTag.textContent = `
-                .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
-            background-color: transparent !important;
-            } `;
+            .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ 
+                background-color: transparent !important;
+            }
+            .m-plylist.m-plylist-pl2.m-plylist_playlist.list-with-covers ul.j-flag{
+                background-color: transparent !important;
+            } 
+            `;
+            document.head.appendChild(styleTag);
+        }else{
+            const styleTag = document.createElement('style');
+            styleTag.textContent = `
+            .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
+                background-color: #29252833 !important;
+            }
+            .m-plylist.m-plylist-pl2.m-plylist_playlist.list-with-covers ul.j-flag{
+                background-color: #29252833 !important;
+            } 
+            `;
             document.head.appendChild(styleTag);
         }
 
@@ -300,16 +315,24 @@ function initConfigView(configView) {
             if(enabled.checked){
                 const styleTag = document.createElement('style');
                 styleTag.textContent = `
-                    .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
-                background-color: transparent !important;
-                } `;
+                .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ 
+                    background-color: transparent !important;
+                }
+                .m-plylist.m-plylist-pl2.m-plylist_playlist.list-with-covers ul.j-flag{
+                    background-color: transparent !important;
+                }
+                 `;
                 document.head.appendChild(styleTag);
             }else{
                 const styleTag = document.createElement('style');
                 styleTag.textContent = `
-                    .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
-                background-color: #29252833 !important;
-                } `;
+                .m-plylist.m-plylist-pl2.m-plylist_playlist.m-plylist-sort.list-with-covers ul.j-flag{ /* 更具体 */
+                    background-color: #29252833 !important;
+                }
+                .m-plylist.m-plylist-pl2.m-plylist_playlist.list-with-covers ul.j-flag{
+                    background-color: #29252833 !important;
+                } 
+                `;
                 document.head.appendChild(styleTag);
             }
             config["enabled"] = enabled.checked;
