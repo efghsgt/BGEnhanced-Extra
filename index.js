@@ -3,7 +3,7 @@
 
 const defaultConfig = {
     pointermove: {
-        followPointerSwitch: true,
+        followPointerSwitch: false,
         transitionDelay: 150,
         transformScale: 110,
         filterBlur: 0,
@@ -20,7 +20,6 @@ const defaultConfig = {
         filterSaturate: 100,
     },
     pointerleave: {
-        positionResetSwitch: true,
         transitionDelay: 300,
         transformScale: 100,
         filterBlur: 0,
@@ -202,17 +201,17 @@ plugin.onLoad(async () => {
         // 清除计时器
         if (timer) clearTimeout(timer);
         // 读取配置
-        const positionResetSwitch = pluginConfig.get("pointerleave")["positionResetSwitch"];
         const transitionDelay = pluginConfig.get("pointerleave")["transitionDelay"];
         const transformScale = pluginConfig.get("pointerleave")["transformScale"];
         const filterBlur = pluginConfig.get("pointerleave")["filterBlur"];
         const filterBrightness = pluginConfig.get("pointerleave")["filterBrightness"];
         const filterSaturate = pluginConfig.get("pointerleave")["filterSaturate"];
+        const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
         // 更改属性
         backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
         backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
         // 位置复位
-        if (positionResetSwitch) {
+        if (followPointerSwitch) {
             backgroundDom.style.setProperty("--translateX", 0);
             backgroundDom.style.setProperty("--translateY", 0);
         }
@@ -264,6 +263,7 @@ plugin.onLoad(async () => {
 function initConfigView(configView) {
     // 指针移动
     {
+        const backgroundDom = document.querySelector(".BGEnhanced-BackgoundDom");
         // 标题按钮
         const apply = configView.querySelector(".pointermove .apply");
         const reset = configView.querySelector(".pointermove .reset");
@@ -284,6 +284,23 @@ function initConfigView(configView) {
             config["filterBrightness"] = filterBrightness.value;
             config["filterSaturate"] = filterSaturate.value;
             pluginConfig.set("pointermove", config);
+            if(!followPointerSwitch.checked){
+                // 读取配置
+                const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
+                const transformScale = pluginConfig.get("pointermove")["transformScale"];
+                const filterBlur = pluginConfig.get("pointermove")["filterBlur"];
+                const filterBrightness = pluginConfig.get("pointermove")["filterBrightness"];
+                const filterSaturate = pluginConfig.get("pointermove")["filterSaturate"];
+                backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
+                backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+                // 复位
+                backgroundDom.style.setProperty("--translateX", 0);
+                backgroundDom.style.setProperty("--translateY", 0);
+                // 画面更改
+                backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
+                backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
+                backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
+            }
         });
         // 恢复默认
         reset.addEventListener("click", () => {
@@ -294,6 +311,23 @@ function initConfigView(configView) {
             filterBrightness.value = defaultConfig["pointermove"]["filterBrightness"];
             filterSaturate.value = defaultConfig["pointermove"]["filterSaturate"];
             pluginConfig.set("pointermove", undefined);
+            if(!followPointerSwitch.checked){
+                // 读取配置
+                const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
+                const transformScale = pluginConfig.get("pointermove")["transformScale"];
+                const filterBlur = pluginConfig.get("pointermove")["filterBlur"];
+                const filterBrightness = pluginConfig.get("pointermove")["filterBrightness"];
+                const filterSaturate = pluginConfig.get("pointermove")["filterSaturate"];
+                backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
+                backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+                // 复位
+                backgroundDom.style.setProperty("--translateX", 0);
+                backgroundDom.style.setProperty("--translateY", 0);
+                // 画面更改
+                backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
+                backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
+                backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
+            }
         });
         // 初始化值
         followPointerSwitch.checked = pluginConfig.get("pointermove")["followPointerSwitch"];
@@ -356,7 +390,6 @@ function initConfigView(configView) {
         const apply = configView.querySelector(".pointerleave .apply");
         const reset = configView.querySelector(".pointerleave .reset");
         // 功能选项
-        const positionResetSwitch = configView.querySelector(".pointerleave .positionResetSwitch");
         const transitionDelay = configView.querySelector(".pointerleave .transitionDelay");
         const transformScale = configView.querySelector(".pointerleave .transformScale");
         const filterBlur = configView.querySelector(".pointerleave .filterBlur");
@@ -365,7 +398,6 @@ function initConfigView(configView) {
         // 立即应用
         apply.addEventListener("click", () => {
             const config = pluginConfig.get("pointerleave");
-            config["positionResetSwitch"] = positionResetSwitch.checked;
             config["transitionDelay"] = transitionDelay.value;
             config["transformScale"] = transformScale.value;
             config["filterBlur"] = filterBlur.value;
@@ -375,7 +407,6 @@ function initConfigView(configView) {
         });
         // 恢复默认
         reset.addEventListener("click", () => {
-            positionResetSwitch.checked = defaultConfig["pointerleave"]["positionResetSwitch"];
             transitionDelay.value = defaultConfig["pointerleave"]["transitionDelay"];
             transformScale.value = defaultConfig["pointerleave"]["transformScale"];
             filterBlur.value = defaultConfig["pointerleave"]["filterBlur"];
@@ -384,7 +415,6 @@ function initConfigView(configView) {
             pluginConfig.set("pointerleave", undefined);
         });
         // 初始化值
-        positionResetSwitch.checked = pluginConfig.get("pointerleave")["positionResetSwitch"]
         transitionDelay.value = pluginConfig.get("pointerleave")["transitionDelay"];
         transformScale.value = pluginConfig.get("pointerleave")["transformScale"];
         filterBlur.value = pluginConfig.get("pointerleave")["filterBlur"];
