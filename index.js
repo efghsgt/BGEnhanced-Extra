@@ -3,7 +3,7 @@
 
 const defaultConfig = {
     pointermove: {
-        followPointerSwitch: false,
+        followPointerSwitch: true,
         transitionDelay: 150,
         transformScale: 110,
         filterBlur: 0,
