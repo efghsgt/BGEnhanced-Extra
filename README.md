@@ -7,6 +7,7 @@
 
 来源[mo-jinran/BGEnhanced-Extra: 让BGEnhanced插件的背景跟随鼠标缩放偏移](https://github.com/mo-jinran/BGEnhanced-Extra)
 
-<video width="320" height="240" controls>
+
+<video width="320" height="240">
     <source src="preview.mp4" type="video/mp4">
 </video>
