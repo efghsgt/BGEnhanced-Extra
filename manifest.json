@@ -1,23 +1,24 @@
 {
     "manifest_version": 1,
-    "name": "BGEnhanced Extra",
-    "slug": "BGEnhanced-Extra",
-    "description": "让BGEnhanced插件的背景跟随指针变化，可简单自定义效果",
-    "preview": "preview.webp",
-    "version": "0.4.0",
-    "author": "沫烬染",
+    "name": "BGEnhanced-ExtraII", 
+    "slug": "BGEnhanced-ExtraII",
+    "version": "0.0.1",
+    "author": "华", 
+    "description": "BGEnhanced-Extra多一个功能",
+    "betterncm_version": ">=0.2.5",
     "author_links": [
-        "https://github.com/mo-jinran"
+        "https://github.com/efghsgt/"
     ],
-    "type": "extension",
     "loadAfter": [
         "BGEnhanced"
     ],
     "requirements": [
         "BGEnhanced"
     ],
+    "type": "extension",
+    "preview": "preview.png",
     "injects": {
-        "Main": [
+        "Main": [ 
             {
                 "file": "index.js"
             }

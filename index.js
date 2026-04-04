@@ -110,21 +110,35 @@ plugin.onLoad(async () => {
     let animationFrameRequest = null;
     let animationFrameRequested = false;
 
-    // 指针移动 改-移除部分到“有操作”
+    // 指针移动
     document.addEventListener("pointermove", event => {
         if (!animationFrameRequested) {
             animationFrameRequested = true;
             animationFrameRequest = requestAnimationFrame(() => {
-                // 跟随指针
-                if (followPointerSwitch) {
-                    let translateX = window.innerWidth / 2 - event.clientX;
-                    let translateY = window.innerHeight / 2 - event.clientY;
-                    translateX = translateX - translateX / (transformScale / 100);
-                    translateY = translateY - translateY / (transformScale / 100);
-                    backgroundDom.style.setProperty("--translateX", `${translateX}px`);
-                    backgroundDom.style.setProperty("--translateY", `${translateY}px`);
-                }
-                animationFrameRequested = false;
+            // 读取配置
+            const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
+            const transformScale = pluginConfig.get("pointermove")["transformScale"];
+            const filterBlur = pluginConfig.get("pointermove")["filterBlur"];
+            const filterBrightness = pluginConfig.get("pointermove")["filterBrightness"];
+            const filterSaturate = pluginConfig.get("pointermove")["filterSaturate"];
+            // 更改属性
+            backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
+            backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+            // 跟随指针
+            const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
+            if (followPointerSwitch) {
+                 let translateX = window.innerWidth / 2 - event.clientX;
+                let translateY = window.innerHeight / 2 - event.clientY;
+                translateX = translateX - translateX / (transformScale / 100);
+                translateY = translateY - translateY / (transformScale / 100);
+                backgroundDom.style.setProperty("--translateX", `${translateX}px`);
+                backgroundDom.style.setProperty("--translateY", `${translateY}px`);
+            }
+            // 画面更改
+            backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
+            backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
+            backgroundDom.style.setProperty("--filterSaturate", `${filterSaturate}%`);
+            animationFrameRequested = false;
             });
         }
     });
@@ -134,7 +148,7 @@ plugin.onLoad(async () => {
         "pointermove", "pointerdown", "pointerup", 
         "mousedown", "mouseup", "wheel", "auxclick",
         // 新增：键盘事件（检测输入文字、按键）
-        "keydown", "keyup",];
+        "keydown", "keyup"];
 
     // 无操作一段时间   
     idleEvents.forEach(eventName => {
@@ -147,9 +161,14 @@ plugin.onLoad(async () => {
             const filterBlur = pluginConfig.get("pointerIdle")["filterBlur"];
             const filterBrightness = pluginConfig.get("pointerIdle")["filterBrightness"];
             const filterSaturate = pluginConfig.get("pointerIdle")["filterSaturate"];
+            const followPointerSwitch = pluginConfig.get("pointermove")["followPointerSwitch"];
             // 更改属性
             backgroundDom.style.setProperty("--transitionDelay", `${transitionDelay}ms`);
             backgroundDom.style.setProperty("--transformScale", `${transformScale}%`);
+            if (followPointerSwitch) {
+                backgroundDom.style.setProperty("--translateX", 0);
+                backgroundDom.style.setProperty("--translateY", 0);
+            }
             // 画面更改
             backgroundDom.style.setProperty("--filterBlur", `${filterBlur}px`);
             backgroundDom.style.setProperty("--filterBrightness", `${filterBrightness}%`);
@@ -158,7 +177,7 @@ plugin.onLoad(async () => {
     });
 
     // 有操作时
-    idleEvents.forEach(eventName => {
+    idleEvents.forEach(eventName => {if(eventName != "pointermove")
         document.addEventListener(eventName, () =>{
             // 读取配置
             const transitionDelay = pluginConfig.get("pointermove")["transitionDelay"];
