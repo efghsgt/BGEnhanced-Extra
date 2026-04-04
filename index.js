@@ -10,12 +10,12 @@ const defaultConfig = {
         transitionDelay: 150,
         transformScale: 110,
         filterBlur: 0,
-        filterBrightness: 80,
+        filterBrightness: 50,
         filterSaturate: 100
     },
     pointerIdle: {
         enabled: true,
-        time: 15000,
+        time: 3000,
         transitionDelay: 300,
         transformScale: 100,
         filterBlur: 0,
@@ -41,7 +41,7 @@ const defaultConfig = {
         transformScale: 100,
         filterBlur: 0,
         filterBrightness: 100,
-        filterSaturate: 40
+        filterSaturate: 100
     }
 }
 
